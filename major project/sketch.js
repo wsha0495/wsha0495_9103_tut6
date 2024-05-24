@@ -165,6 +165,7 @@ function drawRectangle(x0, y0, si, sj, insideCol) {
 
   // Initialization variables for storing colors
   let prevCol1, prevCol2, newCol;
+
   // Horizontal Loop Drawing Rectangle
   for (let x = x0; x < x0 + si + v / 2; x += v) {
     // Select a new color that is different from the previous one
@@ -215,28 +216,3 @@ function drawRectangle(x0, y0, si, sj, insideCol) {
     rect(x0 + si, y, v, v);
   }
 }
-
-// Vertical Loop Drawing Rectangles
-for (let y = y0 + v; y < y0 + sj - v / 2; y += v) {
-  // Select a new color that is different from the previous one
-  do {
-    newCol = random(palette);
-  } while (newCol == prevCol1)
-  // Use the primary color with a 2/3 probability
-  if (random(1) < 2 / 3) newCol = mainCol;
-  // Fill colors and draw rectangles
-  fill(newCol);
-  prevCol1 = newCol;
-  rect(x0, y, v, v);
-
-      // Select a new color that is different from the previous one
-      do {
-        newCol = random(palette);
-      } while (newCol == prevCol2)
-      // Use the primary color with a 2/3 probability
-      if (random(1) < 2 / 3) newCol = mainCol;
-      // Fill colors and draw rectangles
-      fill(newCol);
-      prevCol2 = newCol;
-      rect(x0 + si, y, v, v);
-    }
