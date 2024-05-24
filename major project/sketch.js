@@ -56,8 +56,8 @@ function  mouseClicked(){
   palette = []
 createComposition();
 for (let i = 0; i < 12; i++) {
-let randomColor = '#' + Math.floor(Math.random()*16777215).toString(16); // 生成随机的十六进制颜色
-palette.push(randomColor); // 将生成的颜色添加到数组中
+let randomColor = '#' + Math.floor(Math.random()*16777215).toString(16); // Generate random hexadecimal colors
+palette.push(randomColor); // Add the generated color to the array
 }
 mainCol = '#' + Math.floor(Math.random()*16777215).toString(16)
 allColors = [...palette.slice(1), mainCol]
