@@ -3,31 +3,29 @@ let N = 36;
 let u, v;
 let backCol = "#fffcf2";
 let palette = ["#050505", "#2b67af", "#ef562f", "#f2eac1"], mainCol = "#f9d531";
-let allColors = [...palette.slice(1), mainCol];
-
-let rectangles = [];
+let allColors = [...palette.slice(1), mainCol];let rectangles = [];
 
 let randInt = (a, b) => (Math.floor(Math.random() * (b - a) + a));
 
 let xoff = 0;
 let yoff = 1000;
 
-
-// Setting the canvas size
+// Set the canvas size
 function setup() {
   createCanvas(500, 500);
-  // Calculate the width of each small square
+ 
+  // Calculate the width of each cube
   u = width / N;
-  // Calculate the boundary of each small square
+  // Calculate the boundaries of each cube
   v = u / 4;
  
   createComposition();
-
+  
 }
 
-// plotting function
+// Drawing Functions
 function draw() {
-  // Drawing background color
+  // Draw the background color
   background(backCol);
   
   translate(width/2,height/2)
@@ -39,11 +37,10 @@ function draw() {
 		text(['HELLO'[i%5]],cos(ang)*r,sin(ang)*r);
 	}
   translate(-width/2,-height/2)
-
+  
   // No Stroke
   noStroke()
   randomSeed(2)
-  
   
   // Iterate over all the cubes
   for (let recta of rectangles) {
@@ -52,32 +49,37 @@ function draw() {
   }
 }
 
-function  mouseClicked(){
-  palette = []
-createComposition();
-for (let i = 0; i < 12; i++) {
-let randomColor = '#' + Math.floor(Math.random()*16777215).toString(16); // Generate random hexadecimal colors
-palette.push(randomColor); // Add the generated color to the array
-}
-mainCol = '#' + Math.floor(Math.random()*16777215).toString(16)
-allColors = [...palette.slice(1), mainCol]
 
+function  mouseClicked(){
+       palette = []
+    createComposition();
+
+      for (let i = 0; i < 12; i++) {
+        // Generate random hexadecimal colors
+        let randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+        // Add the generated color to the array
+        palette.push(randomColor); 
+  }
+  mainCol = '#' + Math.floor(Math.random()*16777215).toString(16)
+    allColors = [...palette.slice(1), mainCol]
+  
 }
 
 // Creating Combined Pattern Functions
 function createComposition() {
-  // Generate random cubes and add to the array until a certain number is reached
+  // Generate random cubes and add them to the array until you reach a certain number.
   for (let i = 0; i < 2000; i++) {
     let newRecta = generateRectangle();
     let canAdd = true;
-    // Checks if the newly generated cube intersects an existing cube in the array.
+    // Check if the newly generated cube intersects an existing cube in the array.
     for (let recta of rectangles) {
       if (rectanglesIntersect(newRecta, recta)) {
         canAdd = false;
         break;
       }
     }
-    // If they do not intersect then add to the array
+
+    // Add to array if disjoint
     if (canAdd) {
       rectangles.push(newRecta);
     }
@@ -93,21 +95,23 @@ function createComposition() {
         sj: 1
       }
       let canAdd = true;
-      // Checks if the newly generated cube intersects an existing cube in the array.
+
+      // Check if the newly generated cube intersects an existing cube in the array.
       for (let recta of rectangles) {
         if (rectanglesIntersect(newRecta, recta)) {
           canAdd = false;
           break;
         }
       }
-      // If they do not intersect then add to the array
+
+      // Add to array if disjoint
       if (canAdd) {
         rectangles.push(newRecta);
       }
     }
   }
 
-  // Assigning internal colors to some small squares
+  // Assign internal colors to some of the smaller squares
   let colors = [...allColors, ...allColors];
   let i = 0;
   while (colors.length > 0) {
@@ -122,11 +126,11 @@ function rectanglesIntersect(recta1, recta2) {
   return ((recta1.i <= recta2.i && recta1.i + recta1.si > recta2.i) || (recta2.i <= recta1.i && recta2.i + recta2.si > recta1.i)) && ((recta1.j <= recta2.j && recta1.j + recta1.sj > recta2.j) || (recta2.j <= recta1.j && recta2.j + recta2.sj > recta1.j));
 }
 
-// Generate randomized cubes
+// Generate random cubes
 function generateRectangle() {
   let si, sj;
   do {
-    // Random generation of si and sj
+    // Randomly generate si and sj
     si = Math.floor(randInt(3, 10) / 2);
     sj = Math.floor(randInt(3, 10) / 2);
   } while ((si == 1 && sj == 1) || (si >= 4 && sj >= 4))
@@ -146,15 +150,15 @@ function generateRectangle() {
 function drawRectangle(x0, y0, si, sj, insideCol) {
   // If there is an internal color parameter
   if (insideCol) {
-    // Fill interior color
+    // Fill internal colors
     fill(insideCol);
-    // Drawing internal rectangles
+    // Draw the inner rectangle
     rect(x0 + 2 * v, y0 + 2 * v, si - 3 * v, sj - 3 * v);
     // If the difference between the length and width of the rectangle is less than 2 * u
     if (Math.abs(si - sj) < 2 * u) {
       // Choose a color at random
       fill(random(allColors));
-      // Drawing internal rectangles with different aspect sizes
+      // Draw internal rectangles with different aspect sizes
       if (si < sj) {
         rect(x0 + 3 * v, y0 + (sj - (si - 6 * v)) / 2, si - 5 * v, si - 5 * v);
       } else if (sj < si) {
@@ -163,23 +167,28 @@ function drawRectangle(x0, y0, si, sj, insideCol) {
     }
   }
 
-  // Initialization variables for storing colors
+  // Initialize variables for storing colors
   let prevCol1, prevCol2, newCol;
+  let w = map(noise(xoff), 0, 1, -20, 40);
+  let h = map(noise(yoff), 0, 1, -20, 40);
 
-  // Horizontal Loop Drawing Rectangle
+  xoff += 0.01;
+  yoff += 0.01;
+
+  // Cycle through the rectangles horizontally
   for (let x = x0; x < x0 + si + v / 2; x += v) {
-    // Select a new color that is different from the previous one
+    // select a new color that is different from the previous one
     do {
       newCol = random(palette);
     } while (newCol == prevCol1)
     // Use the primary color with a 2/3 probability
-    if (Math.random() < 2 / 3) newCol = mainCol;
+    if (random(1) < 2 / 3) newCol = mainCol;
     // Fill colors and draw rectangles
     fill(newCol);
     prevCol1 = newCol;
-    rect(x, y0, v, v);
+    rect(x+w, y0+h, v, v);
 
-    // Select a new color that is different from the previous one
+    // select a new color that is different from the previous one
     do {
       newCol = random(palette);
     } while (newCol == prevCol2)
@@ -188,31 +197,8 @@ function drawRectangle(x0, y0, si, sj, insideCol) {
     // Fill colors and draw rectangles
     fill(newCol);
     prevCol2 = newCol;
-    rect(x, y0 + sj, v, v);
+    rect(x+w, y0 + sj+h, v, v);
   }
 
-  // Vertical Loop Drawing Rectangles
-  for (let y = y0 + v; y < y0 + sj - v / 2; y += v) {
-    // Select a new color that is different from the previous one
-    do {
-      newCol = random(palette);
-    } while (newCol == prevCol1)
-    // Use the primary color with a 2/3 probability
-    if (Math.random() < 2 / 3) newCol = mainCol;
-    // Fill colors and draw rectangles
-    fill(newCol);
-    prevCol1 = newCol;
-    rect(x0, y, v, v);
-
-    // Select a new color that is different from the previous one
-    do {
-      newCol = random(palette);
-    } while (newCol == prevCol2)
-    // Use the primary color with a 2/3 probability
-    if (Math.random() < 2 / 3) newCol = mainCol;
-    // Fill colors and draw rectangles
-    fill(newCol);
-    prevCol2 = newCol;
-    rect(x0 + si, y, v, v);
-  }
+ 
 }
